@@ -74,6 +74,9 @@ run = neptune.init_run(
     api_token="eyJhcGlfYWRkcmVzcyI6Imh0dHBzOi8vYXBwLm5lcHR1bmUuYWkiLCJhcGlfdXJsIjoiaHR0cHM6Ly9hcHAubmVwdHVuZS5haSIsImFwaV9rZXkiOiI2MDc3N2YyYy0zNGNjLTQwMGQtOTZiOC0zMmMwNTNiMTdmNDEifQ=="
 )
 
+# Folder
+run["train/checkpoints"].track_files(str(CHECKPOINT_PATH))
+
 split_time = 1000
 time_train = time[:split_time]
 x_train = series[:split_time]
