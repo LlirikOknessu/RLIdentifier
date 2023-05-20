@@ -6,14 +6,12 @@ import neptune
 
 RAW_DATA_FOLDER = Path('data/identification_experiment_raw/')
 OUTPUT_DATA_FOLDER = Path('data/identification_experiment/')
-OUTPUT_PLOT_FOLDER = Path('data/identification_experiment_plots/')
 
 JIRA = 'IDS-002'
 
 if __name__ == '__main__':
 
     OUTPUT_DATA_FOLDER.mkdir(exist_ok=True, parents=True)
-    OUTPUT_PLOT_FOLDER.mkdir(exist_ok=True, parents=True)
 
     for file in RAW_DATA_FOLDER.glob('*.csv'):
         run = neptune.init_run(
@@ -23,7 +21,6 @@ if __name__ == '__main__':
 
         run["train/raw_data"].track_files(str(RAW_DATA_FOLDER))
         run["train/prepared_data"].track_files(str(OUTPUT_DATA_FOLDER))
-        run["train/plots"].track_files(str(OUTPUT_PLOT_FOLDER))
 
         run["JIRA"] = JIRA
         run["preparation"] = "train_test_split"
