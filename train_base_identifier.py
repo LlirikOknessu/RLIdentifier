@@ -75,7 +75,7 @@ if __name__ == "__main__":
         break
 
     identifier = DenseIdentifier(checkpoint_path=CHECKPOINT_PATH, params=PARAMS)
-    identifier.train(wg, epochs=500)
+    identifier.train(wg, epochs=50)
 
     # Track the training process by logging your training metrics
     # run["train/mae"].extend(identifier.history.history['mae'])
