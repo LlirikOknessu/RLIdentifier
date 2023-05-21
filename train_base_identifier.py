@@ -8,6 +8,9 @@ from src.libs.WindowGenerator import WindowGenerator
 from pathlib import Path
 import pandas as pd
 
+
+tf.debugging.set_log_device_placement(True)
+
 JIRA = 'IDS-003'
 PARAMS = {
     "batch_size": 64,
