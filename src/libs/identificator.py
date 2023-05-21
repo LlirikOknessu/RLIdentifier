@@ -77,8 +77,8 @@ class DenseIdentifier(BaseIdentifier):
 
         self.model = tf.keras.Sequential([
             keras.layers.InputLayer(input_shape=(12, 3)),
-            tf.keras.layers.LSTM(units=256, return_sequences=True),
-            tf.keras.layers.LSTM(units=256, return_sequences=True),
+            tf.keras.layers.LSTM(units=64, return_sequences=True),
+            tf.keras.layers.LSTM(units=64, return_sequences=True),
 
             tf.keras.layers.Dense(2)
         ])
