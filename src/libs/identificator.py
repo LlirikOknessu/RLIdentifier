@@ -79,7 +79,7 @@ class DenseIdentifier(BaseIdentifier):
             keras.layers.InputLayer(input_shape=(12, 3)),
             tf.keras.layers.LSTM(units=64, return_sequences=True),
             tf.keras.layers.LSTM(units=64, return_sequences=True),
-            tf,keras.layers.BatchNormalization(),
+            tf.keras.layers.BatchNormalization(),
             tf.keras.layers.Dense(2)
         ])
 
