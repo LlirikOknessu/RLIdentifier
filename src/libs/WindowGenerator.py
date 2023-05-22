@@ -51,13 +51,6 @@ class WindowGenerator:
             sequence_stride=1,
             shuffle=True,
             batch_size=64, )
-        targets = tf.keras.utils.timeseries_dataset_from_array(
-            data=targets,
-            targets=None,
-            sequence_length=self.total_window_size,
-            sequence_stride=1,
-            shuffle=True,
-            batch_size=64, )
 
         return data
 

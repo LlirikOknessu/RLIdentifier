@@ -75,13 +75,18 @@ class DenseIdentifier(BaseIdentifier):
     def __init__(self, checkpoint_path: Path, params=None):
         super().__init__(checkpoint_path, params)
 
-        self.model = tf.keras.Sequential([
-            keras.layers.InputLayer(input_shape=(12, 3)),
-            tf.keras.layers.LSTM(units=64, return_sequences=True),
-            tf.keras.layers.LSTM(units=64, return_sequences=True),
-            tf.keras.layers.BatchNormalization(),
-            tf.keras.layers.Dense(2)
-        ])
+        inputs = keras.Input(shape=(64, 3))
+        x = tf.keras.layers.BatchNormalization()(inputs)
+        x = tf.keras.layers.LSTM(units=128, return_sequences=True)(x)
+        x = tf.keras.layers.LSTM(units=128, return_sequences=True)(x)
+        x = tf.keras.layers.TimeDistributed(
+            tf.keras.layers.Dense(activation='linear', units=32)
+        )(x)
+        output = tf.keras.layers.TimeDistributed(
+            tf.keras.layers.Dense(activation='linear', units=2)
+        )(x)
+
+        self.model = tf.keras.Model(inputs=inputs, outputs=output, name='LSTMRaw')
 
         self.model.compile(loss=keras.losses.Huber(),
                            optimizer=self.optimizer,
