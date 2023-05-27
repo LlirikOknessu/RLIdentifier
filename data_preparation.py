@@ -27,7 +27,7 @@ if __name__ == '__main__':
 
         df = pd.read_csv(file)
         df.columns = ['time', 'u', 'y', 'k', 't']
-        train, test = train_test_split(df, test_size=0.3, shuffle=False)
+        train, test = train_test_split(df, test_size=0.2, shuffle=False)
 
         train.to_csv(OUTPUT_DATA_FOLDER / f'{file.name.replace(".csv", "")}_train.csv', index=False)
         test.to_csv(OUTPUT_DATA_FOLDER / f'{file.name.replace(".csv", "")}_test.csv', index=False)

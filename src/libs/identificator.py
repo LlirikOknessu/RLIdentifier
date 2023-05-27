@@ -2,6 +2,7 @@ import numpy as np
 import tensorflow as tf
 from tensorflow import keras
 from pathlib import Path
+from src.libs.SimpleWindowGenerator import SimpleWindowGenerator
 
 tf.keras.backend.set_floatx('float64')
 
@@ -21,6 +22,10 @@ class BaseIdentifier:
         self.optimizer = keras.optimizers.Adam(learning_rate=self.params.get('learning_rate', 2))
         self.history = None
 
+    def load_model(self, input_path: Path = None):
+        if input_path is None:
+            input_path = self.checkpoint_path
+        self.model = keras.models.load_model(str(input_path))
 
 class CNNIdentifier(BaseIdentifier):
 
@@ -65,25 +70,22 @@ class CNNIdentifier(BaseIdentifier):
                                       validation_data=valid_set,
                                       callbacks=[self.early_stopping, self.model_checkpoint])
 
-    def load_model(self, input_path: Path = None):
-        if input_path is None:
-            input_path = self.checkpoint_path
-        self.model = keras.models.load_model(str(input_path))
-
 
 class DenseIdentifier(BaseIdentifier):
-    def __init__(self, checkpoint_path: Path, params=None):
+    def __init__(self, checkpoint_path: Path, window: SimpleWindowGenerator, params=None):
         super().__init__(checkpoint_path, params)
+        self.batch_size = self.params.get('batch_size', 128)
+        self.train_ds = window.train_dataset
+        self.valid_ds = window.test_dataset
 
-        inputs = keras.Input(shape=(64, 3))
-        x = tf.keras.layers.BatchNormalization()(inputs)
-        x = tf.keras.layers.LSTM(units=128, return_sequences=True)(x)
+        inputs = keras.Input(shape=(window.sequence_length, window.features))
+        x = tf.keras.layers.LSTM(units=128, return_sequences=True)(inputs)
         x = tf.keras.layers.LSTM(units=128, return_sequences=True)(x)
         x = tf.keras.layers.TimeDistributed(
             tf.keras.layers.Dense(activation='linear', units=32)
         )(x)
         output = tf.keras.layers.TimeDistributed(
-            tf.keras.layers.Dense(activation='linear', units=2)
+            tf.keras.layers.Dense(activation='linear', units=window.labels)
         )(x)
 
         self.model = tf.keras.Model(inputs=inputs, outputs=output, name='LSTMRaw')
@@ -92,9 +94,14 @@ class DenseIdentifier(BaseIdentifier):
                            optimizer=self.optimizer,
                            metrics=["mae"])
 
-    def train(self, window, epochs=500):
-        history = self.model.fit(window.train.prefetch(1),
+    def train(self, epochs=500):
+
+        history = self.model.fit(self.train_ds,
+                                 validation_data=self.valid_ds,
                                  epochs=epochs,
-                                 validation_data=window.val.prefetch(1),
+                                 batch_size=self.batch_size,
+                                 shuffle=False,
                                  callbacks=[self.early_stopping])
         return history
+
+
