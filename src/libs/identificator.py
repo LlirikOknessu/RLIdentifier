@@ -120,3 +120,17 @@ class NBeatsBlock(tf.keras.layers.Layer):
         self.horizon = horizon
         self.n_neurons = n_neurons
         self.n_layers = n_layers
+
+        # Block contains stack of 4 fully connected layers, each has ReLU activation
+        self.hidden = [tf.keras.layers.Dense(n_neurons, activation='relu') for _ in range(n_layers)]
+        # Output of the block is a theta layer with linear activation
+        self.theta_layer = tf.keras.layers.Dense(theta_size, activation="linear", name="theta")
+
+    def call(self, inputs):
+        x = inputs
+        for layer in self.hidden:
+            x = layer(x)
+        theta = self.theta_layer(x)
+        # Output the backcast and forecast from theta
+        backcast, forecast = theta[:, :self.input_size], theta[:, -self.horizon:]
+        return backcast, forecast
