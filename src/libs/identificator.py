@@ -101,7 +101,7 @@ class LSTMIdentifier(BaseIdentifier):
                                  epochs=epochs,
                                  batch_size=self.batch_size,
                                  shuffle=False,
-                                 callbacks=[self.early_stopping])
+                                 callbacks=[self.early_stopping, self.model_checkpoint])
         return self.history
 
 
