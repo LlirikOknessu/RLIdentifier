@@ -81,7 +81,7 @@ if __name__ == "__main__":
     run["train/checkpoints"].track_files(str(CHECKPOINT_PATH))
 
     # Record the final results
-    run["mae"] = keras.metrics.mean_absolute_error(x_valid, cnn_forecast).numpy()
+    # run["mae"] = keras.metrics.mean_absolute_error(x_valid, cnn_forecast).numpy()
 
     # Stop the connection and synchronize the data with the Neptune servers
     run.stop()
