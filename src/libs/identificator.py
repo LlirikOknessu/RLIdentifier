@@ -82,9 +82,6 @@ class DenseIdentifier(BaseIdentifier):
         x = tf.keras.layers.LSTM(units=128, return_sequences=True)(inputs)
         x = tf.keras.layers.LSTM(units=128, return_sequences=True)(x)
         x = tf.keras.layers.TimeDistributed(
-            tf.keras.layers.Dense(activation='relu', units=64)
-        )(x)
-        x = tf.keras.layers.TimeDistributed(
             tf.keras.layers.Dense(activation='relu', units=32)
         )(x)
         output = tf.keras.layers.TimeDistributed(
