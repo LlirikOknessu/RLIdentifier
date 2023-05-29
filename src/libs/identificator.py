@@ -27,6 +27,7 @@ class BaseIdentifier:
             input_path = self.checkpoint_path
         self.model = keras.models.load_model(str(input_path))
 
+
 class CNNIdentifier(BaseIdentifier):
 
     def __init__(self, checkpoint_path: Path, params=None):
@@ -71,7 +72,7 @@ class CNNIdentifier(BaseIdentifier):
                                       callbacks=[self.early_stopping, self.model_checkpoint])
 
 
-class DenseIdentifier(BaseIdentifier):
+class LSTMIdentifier(BaseIdentifier):
     def __init__(self, checkpoint_path: Path, window: SimpleWindowGenerator, params=None):
         super().__init__(checkpoint_path, params)
         self.batch_size = self.params.get('batch_size', 128)
@@ -95,13 +96,27 @@ class DenseIdentifier(BaseIdentifier):
                            metrics=["mae"])
 
     def train(self, epochs=500):
-
-        history = self.model.fit(self.train_ds,
+        self.history = self.model.fit(self.train_ds,
                                  validation_data=self.valid_ds,
                                  epochs=epochs,
                                  batch_size=self.batch_size,
                                  shuffle=False,
                                  callbacks=[self.early_stopping])
-        return history
+        return self.history
 
 
+# Create N-BEATS custom layer
+class NBeatsBlock(tf.keras.layers.Layer):
+    def __init__(self,
+                 input_size: int,
+                 theta_size: int,
+                 horizon: int,
+                 n_neurons: int,
+                 n_layers: int,
+                 **kwargs):  # The **kwargs argument takes care of all the arguments for the parent class
+        super().__init__(**kwargs)
+        self.input_size = input_size
+        self.theta_size = theta_size
+        self.horizon = horizon
+        self.n_neurons = n_neurons
+        self.n_layers = n_layers

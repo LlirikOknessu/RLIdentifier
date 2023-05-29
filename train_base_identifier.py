@@ -3,7 +3,7 @@ from tensorflow import keras
 import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
-from src.libs.identificator import DenseIdentifier
+from src.libs.identificator import LSTMIdentifier
 from src.libs.WindowGenerator import WindowGenerator
 from src.libs.SimpleWindowGenerator import SimpleWindowGenerator
 from pathlib import Path
@@ -66,8 +66,8 @@ if __name__ == "__main__":
 
     print(swg)
 
-    identifier = DenseIdentifier(checkpoint_path=CHECKPOINT_PATH, params=PARAMS, window=swg)
-    identifier.train(epochs=50)
+    identifier = LSTMIdentifier(checkpoint_path=CHECKPOINT_PATH, params=PARAMS, window=swg)
+    identifier.train(epochs=100)
 
     # Track the training process by logging your training metrics
     run["train/mae"].extend(identifier.history.history['mae'])
