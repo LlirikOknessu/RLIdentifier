@@ -67,7 +67,7 @@ if __name__ == "__main__":
     print(swg)
 
     identifier = LSTMIdentifier(checkpoint_path=CHECKPOINT_PATH, params=PARAMS, window=swg)
-    identifier.train(epochs=200)
+    identifier.train(epochs=300)
 
     # Track the training process by logging your training metrics
     run["train/mae"].extend(identifier.history.history['mae'])
